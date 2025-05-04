@@ -1,5 +1,6 @@
 from datetime import datetime
 import os
+import re
 import subprocess
 
 datetime = datetime.now().strftime('%d%m%y')
@@ -28,3 +29,14 @@ for number, file in files:
         print(result.stdout)
     except subprocess.CalledProcessError as e:
         print(f"Unable to process {file}: {e.stderr}")
+
+with open(dataset, 'r') as file:
+    lines = file.readlines()
+
+with open(dataset, 'w') as file:
+    for line in lines:
+        if re.search(r'<redner id="[^:]*:', line):
+            continue
+        line = line.replace('#', '')
+        line = re.sub(r'[0-9]+Anlage.*', '', line)
+        file.write(line)
